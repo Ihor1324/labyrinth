@@ -24,13 +24,13 @@ def show_intro(screen, win_width, win_height):
         rules = [
             "Правила гри:",
             "- Рухайтеся за допомогою стрілок.",
-            "- Стріляйте по ворогах пробілом — знищуйте зло!",
+            "- Стріляй натиснувши на пробіл",
             "- Збирайте всі монети, як справжній мисливець за скарбами.",
             "- Уникайте привидів — вони не фанати дружби.",
             "- Знайдіть фініш, але тільки після збору монет!",
             "- Стіну фіналу відкриє тільки повна колекція зірок.",
             "",
-            "Порада: але я не раджу стріляти в ворогів.",
+            "Порада: я не раджу знищувати привидів.",
             "Натисніть ПРОБІЛ, щоб вирушити в пригоду..."
         ]
 
@@ -166,7 +166,7 @@ class decor(GameSprite):
 win_width = 1080
 win_height = 720
 window = display.set_mode((win_width, win_height))  # Створюємо вікно
-display.set_caption("Лабіринт")  # Заголовок
+display.set_caption("No Way Out")  # Заголовок
 back = transform.scale(image.load("background.jpg"), (win_width, win_height))  # Фонове зображення
 
 # Ініціалізація Pygame
@@ -281,6 +281,8 @@ coins.add(prize)
 finish = False  # Чи завершено гру
 run = True  # Основний цикл гри
 
+total_monsters = 4
+
 coin_collected = 0
 show_exit = False
 
@@ -301,6 +303,8 @@ win_sound.set_volume(0.5)  # гучність (від 0.0 до 1.0)
 
 game_over_sound = pygame.mixer.Sound("game_over.wav")
 game_over_sound.set_volume(0.5)  # гучність (від 0.0 до 1.0)
+
+monster_killed = False
 
 
 while run:  # Поки гра активна
@@ -333,11 +337,19 @@ while run:  # Поки гра активна
         packman.update()  # Оновлення гравця
         bullets.update()  # Оновлення куль
 
+        for bullet in bullets:
+            hit_monsters = sprite.spritecollide(bullet, monsters, True)
+            if hit_monsters:
+                bullet.kill()
+                monster_killed = True  # Хоч один монстр був убитий
+
+
         packman.reset()  # Відображення гравця
         bullets.draw(window)  # Малювання всіх куль
         barriers.draw(window)  # Малювання перешкод
         final_sprite.reset()
-        if coin_collected == 3 and w31 in barriers:
+
+        if coin_collected == 3 and not monster_killed and len(monsters) == total_monsters and w31 in barriers:
             barriers.remove(w31)
         
 
@@ -361,7 +373,7 @@ while run:  # Поки гра активна
             # Відтворення відео програшу
             for frame in lose_clip.iter_frames(fps=30, dtype='uint8'):
                 background_music.set_volume(0.0)  # гучність (від 0.0 до 1.0)
-                win_sound.play()
+                game_over_sound.play()
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         quit()
@@ -379,9 +391,8 @@ while run:  # Поки гра активна
 
             # Відтворення відео перемоги
             for frame in win_clip.iter_frames(fps=30, dtype='uint8'):
-                pygame.mixer.music.load("game_over.wav")
                 background_music.set_volume(0.0)  # гучність (від 0.0 до 1.0)
-                win_sound.play()
+                game_over_sound.play()
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         quit()
