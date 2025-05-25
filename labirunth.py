@@ -173,10 +173,10 @@ back = transform.scale(image.load("background.jpg"), (win_width, win_height))  #
 pygame.init()
 
 # Завантаження відео (перемога)
-win_clip = VideoFileClip('thumb_video.mp4').subclip(0, 12)  # Відео для виграшу
+win_clip = VideoFileClip('thumb_video.mp4').subclip(0, 3.6)  # Відео для виграшу
 
 # Завантаження відео (програш)
-lose_clip = VideoFileClip('game _over.mp4').subclip(0, 6)  # Відео для програшу
+lose_clip = VideoFileClip('game _over.mp4').subclip(0, 3.6)  # Відео для програшу
 
 
 barriers = sprite.Group()  # Група для перешкод
@@ -299,10 +299,10 @@ bullet_sound = pygame.mixer.Sound("bullet.wav")
 bullet_sound.set_volume(0.5)  # гучність (від 0.0 до 1.0)
 
 win_sound = pygame.mixer.Sound("win.wav")
-win_sound.set_volume(0.5)  # гучність (від 0.0 до 1.0)
+win_sound.set_volume(0.2)  # гучність (від 0.0 до 1.0)
 
 game_over_sound = pygame.mixer.Sound("game_over.wav")
-game_over_sound.set_volume(0.5)  # гучність (від 0.0 до 1.0)
+game_over_sound.set_volume(0.2)  # гучність (від 0.0 до 1.0)
 
 monster_killed = False
 
@@ -349,7 +349,7 @@ while run:  # Поки гра активна
         barriers.draw(window)  # Малювання перешкод
         final_sprite.reset()
 
-        if coin_collected == 3 and not monster_killed and len(monsters) == total_monsters and w31 in barriers:
+        if coin_collected == 1 and not monster_killed and len(monsters) == total_monsters and w31 in barriers:
             barriers.remove(w31)
         
 
@@ -361,7 +361,7 @@ while run:  # Поки гра активна
         if collected:
             coin_collected += len(collected)
             coin_sound.play()
-            if coin_collected >= 3:
+            if coin_collected >= 1:
                 show_exit = True
         coin.draw(window) # малюємо монету
         coins.draw(window) # малюємо монети в центрі
